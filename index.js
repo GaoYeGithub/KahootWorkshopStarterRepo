@@ -1,33 +1,39 @@
-const Kahoot = require("kahoot.js-updated"); 
+const Kahoot = require("kahoot.js-updated");
 const client = new Kahoot();
 
-for (let step = 0; step < 1000; step++) {
-  client.join('06612757', Math.random() + "- FOOD");
+client.join('7126907', Math.random() + "- Winner");
+
+client.on("QuizStart", () => {
+  console.log("Quiz started!");
+});
+
+client.on("QuestionStart", question => {
+  console.log("New question!");
+  const correctAnswerIndex = verifyProperty(question.answers, 'correct');
+  if (correctAnswerIndex !== undefined) {
+    console.log(`Answering Option ${correctAnswerIndex + 1}, the correct answer!`);
+    question.answer(correctAnswerIndex);
+  } else {
+    console.log("No correct answer found.");
+  }
+});
+
+function verifyProperty(array, property) {
+  let finalNo;
+  array.forEach(function(value, i) {
+    if (value[property] === true) { finalNo = i; }
+  });
+  return finalNo;
 }
 
-for (let step = 0; step < 1000; step++) {
-  const lyrics = `never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you
-  Never gonna give you up
-  Never gonna let you down
-  Never gonna run around and desert you
-  Never gonna make you cry
-  Never gonna say goodbye
-  Never gonna tell a lie and hurt you`
-  
-  const lyricsArray = lyrics.split("\n")
-  
-  client.setMaxListeners(100)
-  
-  lyricsArray.forEach(element => client.join('06612757', element));
-}
+client.on("QuizEnd", () => {
+  console.log("The quiz has ended.");
+});
+
+client.on("Disconnect", reason => {
+  console.log(`Disconnected: ${reason}`);
+});
+
+client.on("Error", error => {
+  console.error(`Error: ${error.message}`);
+});
